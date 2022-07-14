@@ -1,4 +1,8 @@
-# CsvToJsonParser 
+# CsvToJsonParser
+## About
+This project helps with generating JSON Docs from CSV Docs.
+## Prerequisites
+* Python 3.10+
 ## Project Setup
 1. Clone the Project:
    ```bash
@@ -20,15 +24,20 @@
    ```
 ## Preparing the Input Data
 1. Create a Google Sheets Doc.
-2. Create all necessary columns in the doc and fill in the data. Check [this](https://docs.google.com/spreadsheets/d/1Wr1iefSVw9_zGCJZGf6hYY06SQ01o4nH9DULol88fCA/edit?usp=sharing) link for the latest Sample SCV.
-3. Download the doc as a `.csv` file and save it somewhere.
+2. Create a sheet for each Question Pattern in the doc.
+2. Create all necessary columns in the sheets and fill in the data. Check [this](https://docs.google.com/spreadsheets/d/1Wr1iefSVw9_zGCJZGf6hYY06SQ01o4nH9DULol88fCA/edit?usp=sharing) link for the latest template of the CSV.
+3. Download the sheets as `.csv` files and save them into a folder.
 ## Running The Project
+### Generating JSON from CSV
 ```bash
 # Print Help
-python parser.py -h
+python csvToJsonParser.py -h
 
-# Parse CSV and Generate JSON
-python parser.py --csv <CSV PATH> --outJson <JSON PATH>
-# Provide only the CSV Filename. Output JSON Filename will be generated automatically
-python parser.py --csv <CSV PATH> 
+# Parse CSVs and Generate JSON
+python csvToJsonParser.py --csv <FOLDER PATH WHERE CSV FILES ARE LOCATED> --grade <GRADE WHICH THE QUESTIONS BELONG TO> --language <LANGUAGE CODE> --subject <SUBJECT>
+ # Example
+python csvToJsonParser.py --csv C:\User\Downloads\CSV --grade 6 --language uz --subject math
+
+# Adding --outJson <JSON PATH> will result in saving the generated JSON File in <JSON PATH> path
+python csvToJsonParser.py --csv C:\User\Downloads\CSV --grade 6 --language uz --subject math --outJson C:\Output\math-grade-6-uz.json
 ```
