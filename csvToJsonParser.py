@@ -5,31 +5,6 @@ import datetime
 import pathlib
 
 
-def cleanup_question_from_quotes(question:map)->map:
-    # Remove double-quotes from options
-    if 'options' in question['question']:
-        for i in range(len(question['question']['options'])):
-            option = question['question']['options'][i].strip()
-
-            if option[0] == '"' and option[-1] == '"':
-                question['question']['options'][i] = option[1:-1]
-
-    # Remove double-quotes from problem and solution
-    if 'problem' in question['question'] and 'solution' in question['question']:
-        for i in range(len(question['question']['problem'])):
-            problem = question['question']['problem'][i].strip()
-
-            if problem[0] == '"' and problem[-1] == '"':
-                question['question']['problem'][i] = problem[1:-1]
-
-        for i in range(len(question['question']['solution'])):
-            solution = question['question']['solution'][i].strip()
-
-            if solution[0] == '"' and solution[-1] == '"':
-                question['question']['solution'][i] = solution[1:-1]
-    
-    return question
-
 def print_error_message(questionId: str, param: str, paramValue: str, requiredParamValue: str):
     print(f"ERROR: {questionId} {param} '{paramValue}' does not match the required {param} '{requiredParamValue}'")
     print("Aborting JSON generation")
@@ -49,6 +24,33 @@ def valid_question(grade: str, subject: str, language: str, question: map) -> bo
         return False
 
     return True
+
+
+def parse_options(rawOptions: str) -> list:
+    res = []
+
+    for line in csv.reader([rawOptions], skipinitialspace=True):
+        for item in line:
+            res.append(item.strip())
+
+    return res
+
+
+def parse_complex_options(rawOptions: str) -> list:
+    res=[]
+    rawOptions = rawOptions.split('[sss]')
+
+    for split in rawOptions:
+        split = split.strip().removeprefix('[').removesuffix(']')
+        options = []
+
+        for line in csv.reader([split], skipinitialspace=True):
+            for item in line:
+                options.append(item.strip())
+        
+        res.append(options)
+    
+    return res
 
 
 def make_json(csvPath, jsonFilePath, grade, subject, language):
@@ -93,28 +95,13 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
 
                     # Patterns 1,2,7,11,12,13
                     if row['pattern'] == "1" or row['pattern'] == "2" or row['pattern'] == "7" or row['pattern'] == "11" or row['pattern'] == "12" or row['pattern'] == "13":
-                        question['question']['options'] = row['options'].split(',')
+                        # Parse Options
+                        question['question']['options'] = parse_options(row['options'])
                     elif row['pattern'] == "3" or row['pattern'] == "5":
                         # Parse Problem
-                        question['problem'] = []
-                        question['solution'] = []
-
-                        for line in csv.reader([row['problem']], skipinitialspace=True):
-                            for item in line:
-                                question['problem'].append(item)
-                        
+                        question['problem'] = parse_options(row['problem'])
                         # Parse Solution
-                        rawSolutions = row['solution'].split('[sss]')
-
-                        for split in rawSolutions:
-                            split = split.strip().removeprefix('[').removesuffix(']')
-                            solution = []
-
-                            for line in csv.reader([split], skipinitialspace=True):
-                                for item in line:
-                                    solution.append(item)
-                            
-                            question['solution'].append(solution)
+                        question['solution'] = parse_complex_options(row['solution'])
                     elif row['pattern'] == "4":
                         question['statements'] = []
                         question['options'] = []
@@ -141,22 +128,33 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                                     'sign': line[1],
                                     'right': line[2]
                                 })
-                        
                     # Patterns 6,14,15,16
-                    elif row['pattern'] == "6" or row['pattern'] == "14" or row['pattern'] == "15" or row['pattern'] == '16':
-                        question['question']['problem'] = row['problem'].split(',')
-                        question['question']['solution'] = row['solution'].split(',')
+                    elif row['pattern'] == "6" or row['pattern'] == "14" or row['pattern'] == "15" or row['pattern'] == '16':                     
+                        question['question']['problem'] = parse_options(row['problem'])
+                        question['question']['solution'] = parse_options(row['solution'])
                     elif row['pattern'] == "8":
                         pass
                     elif row['pattern'] == "9":
-                        pass
+                        question['options'] = []
+                        rawOptions = row['options'].split('[sss]')
+                        
+                        for option in rawOptions:
+                            option = option.strip().removeprefix('[').removesuffix(']')
+
+                            for line in csv.reader([option], skipinitialspace=True):
+                                question['options'].append({
+                                    'left': line[0],
+                                    'sign': line[1],
+                                    'right': line[2]
+                                })
                     elif row['pattern'] == "10":
-                        pass
+                        question['statements'] = parse_complex_options(row['statement'])
+                        question['options'] = parse_complex_options(row['options'])
                     else:
                         print(f"Parser not implemented for pattern {row['pattern']}")
                         continue
 
-                    question = cleanup_question_from_quotes(question)
+                    #question = cleanup_question_from_quotes(question)
                     chapters[row['chapter']]['questions'].append(question)
 
     for _, chapter in chapters.items():
