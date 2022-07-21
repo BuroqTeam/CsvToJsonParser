@@ -107,7 +107,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                         # Parse Problem
                         question['problem'] = parse_options(row['id'], row['problem'])
                         # Parse Solution
-                        question['solution'] = parse_complex_options(row['solution'])
+                        question['solution'] = parse_complex_options(row['id'], row['solution'])
                     elif row['pattern'] == "4":
                         question['statements'] = []
                         question['options'] = []
@@ -154,8 +154,8 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                                     'right': line[2]
                                 })
                     elif row['pattern'] == "10":
-                        question['statements'] = parse_complex_options(row['statement'])
-                        question['options'] = parse_complex_options(row['options'])
+                        question['statements'] = parse_complex_options(row['id'], row['statement'])
+                        question['options'] = parse_complex_options(row['id'], row['options'])
                     else:
                         print(f"Parser not implemented for pattern {row['pattern']}")
                         continue
