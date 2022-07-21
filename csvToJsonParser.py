@@ -26,29 +26,35 @@ def valid_question(grade: str, subject: str, language: str, question: map) -> bo
     return True
 
 
-def parse_options(rawOptions: str) -> list:
+def parse_options(questionId: str, rawOptions: str) -> list:
     res = []
 
-    for line in csv.reader([rawOptions], skipinitialspace=True):
-        for item in line:
-            res.append(item.strip())
+    try:
+        for line in csv.reader([rawOptions], skipinitialspace=True):
+            for item in line:
+                res.append(item.strip())
+    except Exception as ex:
+        print(f"Error in parsing {questionId}: {ex}")
 
     return res
 
 
-def parse_complex_options(rawOptions: str) -> list:
+def parse_complex_options(questionId: str, rawOptions: str) -> list:
     res=[]
     rawOptions = rawOptions.split('[sss]')
 
-    for split in rawOptions:
-        split = split.strip().removeprefix('[').removesuffix(']')
-        options = []
+    try:
+        for split in rawOptions:
+            split = split.strip().removeprefix('[').removesuffix(']')
+            options = []
 
-        for line in csv.reader([split], skipinitialspace=True):
-            for item in line:
-                options.append(item.strip())
-        
-        res.append(options)
+            for line in csv.reader([split], skipinitialspace=True):
+                for item in line:
+                    options.append(item.strip())
+            
+            res.append(options)
+    except Exception as ex:
+        print(f"Error in parsing {questionId}: {ex}")    
     
     return res
 
@@ -96,10 +102,10 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                     # Patterns 1,2,7,11,12,13
                     if row['pattern'] == "1" or row['pattern'] == "2" or row['pattern'] == "7" or row['pattern'] == "11" or row['pattern'] == "12" or row['pattern'] == "13":
                         # Parse Options
-                        question['question']['options'] = parse_options(row['options'])
+                        question['question']['options'] = parse_options(row['id'], row['options'])
                     elif row['pattern'] == "3" or row['pattern'] == "5":
                         # Parse Problem
-                        question['problem'] = parse_options(row['problem'])
+                        question['problem'] = parse_options(row['id'], row['problem'])
                         # Parse Solution
                         question['solution'] = parse_complex_options(row['solution'])
                     elif row['pattern'] == "4":
@@ -130,8 +136,8 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                                 })
                     # Patterns 6,14,15,16
                     elif row['pattern'] == "6" or row['pattern'] == "14" or row['pattern'] == "15" or row['pattern'] == '16':                     
-                        question['question']['problem'] = parse_options(row['problem'])
-                        question['question']['solution'] = parse_options(row['solution'])
+                        question['question']['problem'] = parse_options(row['id'], row['problem'])
+                        question['question']['solution'] = parse_options(row['id'], row['solution'])
                     elif row['pattern'] == "8":
                         pass
                     elif row['pattern'] == "9":
