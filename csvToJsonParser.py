@@ -79,7 +79,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
             csvReader = csv.DictReader(csvf)
 
             for row in csvReader:
-                if row['question']:
+                if 'question' in row and row['question']:
                     # Make sure each question metadata matches the User Input
                     if not valid_question(grade, subject, language, row):
                         exit(1)
@@ -105,12 +105,12 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                         question['question']['options'] = parse_options(row['id'], row['options'])
                     elif row['pattern'] == "3" or row['pattern'] == "5":
                         # Parse Problem
-                        question['problem'] = parse_options(row['id'], row['problem'])
+                        question['question']['problem'] = parse_options(row['id'], row['problem'])
                         # Parse Solution
-                        question['solution'] = parse_complex_options(row['id'], row['solution'])
+                        question['question']['solution'] = parse_complex_options(row['id'], row['solution'])
                     elif row['pattern'] == "4":
-                        question['statements'] = []
-                        question['options'] = []
+                        question['question']['statements'] = []
+                        question['question']['options'] = []
                         rawStatements = row['statement'].split('[sss]')
                         rawOptions = row['options'].split('[sss]')
                         
@@ -119,7 +119,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                             statement = statement.strip().removeprefix('[').removesuffix(']')
                             
                             for line in csv.reader([statement], skipinitialspace=True):
-                                question['statements'].append({
+                                question['question']['statements'].append({
                                     'statement': line[0],
                                     'image': line[1]
                                 })
@@ -129,7 +129,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                             option = option.strip().removeprefix('[').removesuffix(']')
                             
                             for line in csv.reader([option], skipinitialspace=True):
-                                question['options'].append({
+                                question['question']['options'].append({
                                     'left': line[0],
                                     'sign': line[1],
                                     'right': line[2]
@@ -141,21 +141,21 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                     elif row['pattern'] == "8":
                         pass
                     elif row['pattern'] == "9":
-                        question['options'] = []
+                        question['question']['options'] = []
                         rawOptions = row['options'].split('[sss]')
                         
                         for option in rawOptions:
                             option = option.strip().removeprefix('[').removesuffix(']')
 
                             for line in csv.reader([option], skipinitialspace=True):
-                                question['options'].append({
+                                question['question']['options'].append({
                                     'left': line[0],
                                     'sign': line[1],
                                     'right': line[2]
                                 })
                     elif row['pattern'] == "10":
-                        question['statements'] = parse_complex_options(row['id'], row['statement'])
-                        question['options'] = parse_complex_options(row['id'], row['options'])
+                        question['question']['statements'] = parse_complex_options(row['id'], row['statement'])
+                        question['question']['options'] = parse_complex_options(row['id'], row['options'])
                     else:
                         print(f"Parser not implemented for pattern {row['pattern']}")
                         continue
