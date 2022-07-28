@@ -28,13 +28,21 @@ def valid_question(grade: str, subject: str, language: str, question: map) -> bo
 
 def parse_options(questionId: str, rawOptions: str) -> list:
     res = []
+    newLine = '\n'
+
+    if newLine in rawOptions:
+        print(f"WARNING: parse_options(): {questionId} contains a New Line in it:")
+        print(f"\t\t{rawOptions}")
+        print("\t\tCheck if the New Line is intentional")
+        rawOptions = f'"{rawOptions}"'
 
     try:
         for line in csv.reader([rawOptions.strip()], skipinitialspace=True):
             for item in line:
                 res.append(item.strip())
     except Exception as ex:
-        print(f"Error in parsing {questionId}: {ex}")
+        print(f"parse_options(): Error in parsing {questionId}: {ex}")
+        print(rawOptions)
 
     return res
 
@@ -54,7 +62,7 @@ def parse_complex_options(questionId: str, rawOptions: str) -> list:
             
             res.append(options)
     except Exception as ex:
-        print(f"Error in parsing {questionId}: {ex}")    
+        print(f"parse_complex_options(): Error in parsing {questionId}: {ex}")    
     
     return res
 
