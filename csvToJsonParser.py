@@ -31,9 +31,9 @@ def parse_options(questionId: str, rawOptions: str) -> list:
     newLine = '\n'
 
     if newLine in rawOptions:
-        print(f"WARNING: parse_options(): {questionId} contains a New Line in it:")
-        print(f"\t\t{rawOptions}")
-        print("\t\tCheck if the New Line is intentional")
+        print(f"\nWARNING: parse_options(): {questionId} contains a New Line in it:\n==========")
+        print(f"{rawOptions}\n==========")
+        print("CHECK IF THE NEW LINE IS INTENTIONAL")
         rawOptions = f'"{rawOptions}"'
 
     try:
