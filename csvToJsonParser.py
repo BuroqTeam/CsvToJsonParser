@@ -30,7 +30,7 @@ def parse_options(questionId: str, rawOptions: str) -> list:
     res = []
 
     try:
-        for line in csv.reader([rawOptions], skipinitialspace=True):
+        for line in csv.reader([rawOptions.strip()], skipinitialspace=True):
             for item in line:
                 res.append(item.strip())
     except Exception as ex:
