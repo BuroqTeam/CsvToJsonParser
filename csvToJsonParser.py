@@ -96,6 +96,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                         chapters[row['chapter']] = {
                             'number': int(row['chapter']),
                             'name': row['chapterName'],
+                            'description': row['description'],
                             'questions': []
                         }
 
