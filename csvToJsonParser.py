@@ -10,6 +10,14 @@ def print_error_message(questionId: str, param: str, paramValue: str, requiredPa
     print("Aborting JSON generation")
 
 
+def validate_question(question: map):
+    params = ['options', 'problem', 'solution', 'statements']
+
+    for param in params:
+        if param in question['question'] and len(question['question'][param]) == 0:
+            print(f"WARNING: {question['id']} has empty params: {param}.")
+
+
 def valid_question(grade: str, subject: str, language: str, question: map) -> bool:
     if question['grade'] != grade:
         print_error_message(question['id'], 'grade', question['grade'], grade)
@@ -29,11 +37,12 @@ def valid_question(grade: str, subject: str, language: str, question: map) -> bo
 def parse_options(questionId: str, rawOptions: str) -> list:
     res = []
     newLine = '\n'
+    rawOptions = rawOptions.rstrip().lstrip()
 
     if newLine in rawOptions:
-        print(f"\nWARNING: parse_options(): {questionId} contains a New Line in it:\n==========")
-        print(f"{rawOptions}\n==========")
-        print("CHECK IF THE NEW LINE IS INTENTIONAL")
+        # print(f"\nWARNING: parse_options(): {questionId} contains a New Line in it:\n==========")
+        # print(f"{rawOptions}\n==========")
+        # print("CHECK IF THE NEW LINE IS INTENTIONAL")
         rawOptions = f'"{rawOptions}"'
 
     try:
@@ -169,7 +178,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                         print(f"Parser not implemented for pattern {row['pattern']}")
                         continue
 
-                    #question = cleanup_question_from_quotes(question)
+                    validate_question(question)
                     chapters[row['chapter']]['questions'].append(question)
 
     for _, chapter in chapters.items():
