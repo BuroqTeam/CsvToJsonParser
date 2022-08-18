@@ -39,7 +39,7 @@ def parse_options(questionId: str, rawOptions: str) -> list:
     newLine = '\n'
     rawOptions = rawOptions.rstrip().lstrip()
 
-    if newLine in rawOptions or ',' in rawOptions:
+    if newLine in rawOptions:
         # print(f"\nWARNING: parse_options(): {questionId} contains a New Line in it:\n==========")
         # print(f"{rawOptions}\n==========")
         # print("CHECK IF THE NEW LINE IS INTENTIONAL")
