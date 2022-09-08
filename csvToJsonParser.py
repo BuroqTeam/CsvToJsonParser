@@ -157,7 +157,8 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                         question['question']['problem'] = parse_options(row['id'], row['problem'])
                         question['question']['solution'] = parse_options(row['id'], row['solution'])
                     elif row['pattern'] == "8":
-                        pass
+                        question['question']['figureType'] = row['figureType']
+                        question['question']['proportion'] = parse_options(row['id'], row['proportion'])
                     elif row['pattern'] == "9":
                         question['question']['options'] = []
                         rawOptions = row['options'].split('[sss]')
