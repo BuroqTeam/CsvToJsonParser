@@ -118,7 +118,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                     }
 
                     # Patterns 1,2,7,11,12,13
-                    if row['pattern'] == "1" or row['pattern'] == "2" or row['pattern'] == "7" or row['pattern'] == "11" or row['pattern'] == "12" or row['pattern'] == "13":
+                    if row['pattern'] == "1" or row['pattern'] == "2" or row['pattern'] == "7" or row['pattern'] == "11" or row['pattern'] == "12" or row['pattern'] == "13" or row['pattern'] == "17":
                         # Parse Options
                         question['question']['options'] = parse_options(row['id'], row['options'])
                     elif row['pattern'] == "3" or row['pattern'] == "5":
