@@ -117,8 +117,8 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                         }
                     }
 
-                    # Patterns 1,2,7,11,12,13
-                    if row['pattern'] == "1" or row['pattern'] == "2" or row['pattern'] == "7" or row['pattern'] == "11" or row['pattern'] == "12" or row['pattern'] == "13" or row['pattern'] == "17":
+                    # Patterns 1,2,7,11,12,13,18,17,19,20,21
+                    if row['pattern'] == "1" or row['pattern'] == "2" or row['pattern'] == "7" or row['pattern'] == "11" or row['pattern'] == "12" or row['pattern'] == "13" or row['pattern'] == "17" or row['pattern'] == "18" or row['pattern'] == "19" or row['pattern'] == "20" or row['pattern'] == "21":
                         # Parse Options
                         question['question']['options'] = parse_options(row['id'], row['options'])
                     elif row['pattern'] == "3" or row['pattern'] == "5":
@@ -174,10 +174,7 @@ def make_json(csvPath, jsonFilePath, grade, subject, language):
                                 })
                     elif row['pattern'] == "10":
                         question['question']['statements'] = parse_complex_options(row['id'], row['statement'])
-                        question['question']['options'] = parse_complex_options(row['id'], row['options'])
-                    # Patterns 18,19
-                    elif row['pattern'] == "18" or row['pattern'] == "19":                        
-                        question['question']['solution'] = parse_options(row['id'], row['solution'])
+                        question['question']['options'] = parse_complex_options(row['id'], row['options'])                    
                     else:
                         print(f"Parser not implemented for pattern {row['pattern']}")
                         continue
